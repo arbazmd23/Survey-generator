@@ -1,22 +1,24 @@
-# Solution 1: Using python-dotenv (Recommended)
-# First install: pip install python-dotenv
+# Solution: Using Streamlit Secrets for Deployment
+# No additional packages needed for API key management
 
 import streamlit as st
 import json
 import anthropic
 from typing import List, Literal
 from pydantic import BaseModel, ValidationError
-from dotenv import load_dotenv
-import os
 
 # ====================
-# Load API Key using python-dotenv
+# Load API Key using Streamlit Secrets
 # ====================
-load_dotenv()  # This loads the .env file
-api_key = os.getenv("ANTHROPIC_API_KEY")
+try:
+    api_key = st.secrets["ANTHROPIC_API_KEY"]
+except KeyError:
+    st.error("❌ ANTHROPIC_API_KEY not found in Streamlit secrets")
+    st.info("Please add your API key to Streamlit secrets in the deployment settings")
+    st.stop()
 
 if not api_key:
-    st.error("❌ ANTHROPIC_API_KEY not found in .env file")
+    st.error("❌ ANTHROPIC_API_KEY is empty in Streamlit secrets")
     st.stop()
 
 # ====================
